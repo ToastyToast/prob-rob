@@ -19,14 +19,14 @@ class KalmanFilter(BaseGaussianFilter):
         self.Q = Q
 
     def step(self, control, measurement):
-        mean = np.dot(self.A, self.mean) + np.dot(self.B, control)
-        cov = self.A.dot(self.cov).dot(self.A.T) + self.R
+        mean = self.A * self.mean + self.B * control
+        cov = self.A * self.cov * self.A.T + self.R
 
-        K = cov.dot(self.C.T).dot(
-            self.C.dot(cov).dot(self.C.T) + self.Q
+        K = cov * self.C.T * (
+            self.C * cov * self.C.T + self.Q
         ).T
 
-        self.mean = mean + K.dot(measurement - self.C.dot(mean))
+        self.mean = mean + K * (measurement - self.C * mean)
         size = self.cov.shape[0]
-        self.cov = (np.eye(size) - K.dot(self.C)).dot(cov)
+        self.cov = (np.eye(size) - K * self.C) * cov
 
