@@ -1,6 +1,6 @@
 import numpy as np
 import math
-from utils import normalize_angle
+from .utils import normalize_angle
 
 
 class MotionModel:
@@ -13,20 +13,20 @@ class MotionModel:
 
 class OdometryMotionModel(MotionModel):
     def __init__(self, pose):
-        self.pose = np.copy(pose)
+        self._pose = np.copy(pose)
 
     @property
     def pose(self):
-        return self.pose
+        return self._pose
 
     @pose.setter
     def pose(self, new_pose):
-        self.pose = np.copy(new_pose)
+        self._pose = np.copy(new_pose)
 
     @pose.deleter
     def pose(self):
-        self.pose = None
-        del self.pose
+        self._pose = None
+        del self._pose
 
     def command(self, command):
         rot1 = command[0]
