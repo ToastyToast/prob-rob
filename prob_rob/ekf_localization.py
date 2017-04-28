@@ -4,7 +4,7 @@ from prob_rob.utils import normalize_angle
 
 
 class EKFLocalizationKnown:
-    def __init__(self, pose, motion_model=None):
+    def __init__(self, pose, motion_command=None):
         # Main estimate
         self.mean = np.copy(pose)
         self.cov = np.zeros((self.mean.size, self.mean.size))
@@ -13,10 +13,10 @@ class EKFLocalizationKnown:
         self._mean = np.copy(self.mean)
         self._cov = np.copy(self.cov)
 
-        self.motion_model = motion_model
+        self.motion_command = motion_command
 
     def predict(self, command):
-        self._mean = self.motion_model.command_static(self.mean, command)
+        self._mean = self.motion_command(self.mean, command)
 
         # TODO: Put in motion model
         theta_n = normalize_angle(self.mean.item(2))
@@ -49,6 +49,7 @@ class EKFLocalizationKnown:
         ry = self._mean.item(1)
         rtheta = normalize_angle(self._mean.item(2))
 
+        # TODO: Fix kalman gain calculation
         for reading in measurements:
             # TODO: Put in measurement model
             lid, srange, sbearing = reading
